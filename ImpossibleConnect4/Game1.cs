@@ -11,11 +11,13 @@ namespace ImpossibleConnect4
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
         private InputHandler inputHandler;
+        private ResourceManager resourceManager;
 
-        private SpriteFont arial;
         private string title = "Impossible Connect 4";
+        private List<Text> texts; //buttons
 
-        private List<Text> texts;
+        private bool inMatch = false;
+        private Match match;
 
         public Game1()
         {
@@ -32,6 +34,9 @@ namespace ImpossibleConnect4
             graphics.ApplyChanges();
 
             inputHandler = new InputHandler();
+            resourceManager = new ResourceManager();
+
+            match = new Match(inputHandler, resourceManager);
 
             base.Initialize();
         }
@@ -41,13 +46,14 @@ namespace ImpossibleConnect4
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            arial = this.Content.Load<SpriteFont>("arial");
+            resourceManager.LoadContent(this.Content);
 
+            //setup text / buttons
             texts = new List<Text>();
-            texts.Add(new Text(inputHandler, arial, title, new Vector2(220, 100), Color.White, 1.0f));
-            texts.Add(new Text(inputHandler, arial, "CPU", new Vector2(220, 300), Color.White, 1.0f));
-            texts.Add(new Text(inputHandler, arial, "2 Player", new Vector2(220, 400), Color.White, 1.0f));
-            texts.Add(new Text(inputHandler, arial, "Exit", new Vector2(220, 500), Color.White, 1.0f));
+            texts.Add(new Text(inputHandler, resourceManager.getArial(), title, new Vector2(220, 100), Color.White, 1.0f));
+            texts.Add(new Text(inputHandler, resourceManager.getArial(), "CPU", new Vector2(220, 300), Color.White, 1.0f));
+            texts.Add(new Text(inputHandler, resourceManager.getArial(), "2 Player", new Vector2(220, 400), Color.White, 1.0f));
+            texts.Add(new Text(inputHandler, resourceManager.getArial(), "Exit", new Vector2(220, 500), Color.White, 1.0f));
         }
 
         protected override void Update(GameTime gameTime)
@@ -57,30 +63,39 @@ namespace ImpossibleConnect4
 
             // TODO: Add your update logic here
             inputHandler.Update();
-            
-            //update buttons and check if they were clicked
-            for (int i = 1; i < texts.Count; i++)
+
+            //we are either in the main menu or currently in a match
+            if (inMatch)
             {
-                texts[i].UpdateColor();
-                if (texts[i].wasClicked())
+
+            }
+            else
+            {
+                //update buttons and check if they were clicked
+                for (int i = 1; i < texts.Count; i++)
                 {
-                    switch (i)
+                    texts[i].UpdateColor();
+                    if (texts[i].wasClicked())
                     {
-                        case 1:
-                            //CPU
-                            break;
+                        switch (i)
+                        {
+                            case 1:
+                                //CPU
+                                break;
 
-                        case 2:
-                            //2 Player
-                            break;
+                            case 2:
+                                //2 Player
+                                match.Setup(false);
+                                break;
 
-                        case 3:
-                            //Exit
-                            Exit();
-                            break;
+                            case 3:
+                                //Exit
+                                Exit();
+                                break;
 
-                        default:
-                            break;
+                            default:
+                                break;
+                        }
                     }
                 }
             }
@@ -95,8 +110,16 @@ namespace ImpossibleConnect4
             // TODO: Add your drawing code here
             spriteBatch.Begin();
 
-            //render text
-            foreach (Text t in texts) t.Draw(spriteBatch);
+            //we are either in the main menu or currently in a match
+            if (inMatch)
+            {
+
+            }
+            else
+            {
+                //render text
+                foreach (Text t in texts) t.Draw(spriteBatch);
+            }
 
             spriteBatch.End();
 
