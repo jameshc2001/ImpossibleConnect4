@@ -16,7 +16,6 @@ namespace ImpossibleConnect4
         private string title = "Impossible Connect 4";
         private List<Text> texts; //buttons
 
-        private bool inMatch = false;
         private Match match;
 
         public Game1()
@@ -30,7 +29,7 @@ namespace ImpossibleConnect4
         {
             // TODO: Add your initialization logic here
             graphics.PreferredBackBufferWidth = 1280;
-            graphics.PreferredBackBufferHeight = 720;
+            graphics.PreferredBackBufferHeight = 960;
             graphics.ApplyChanges();
 
             inputHandler = new InputHandler();
@@ -58,19 +57,18 @@ namespace ImpossibleConnect4
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-
-            // TODO: Add your update logic here
             inputHandler.Update();
 
             //we are either in the main menu or currently in a match
-            if (inMatch)
+            if (match.inMatch)
             {
-
+                match.Update();
             }
             else
             {
+                //check for exit
+                if (inputHandler.getEscJustDown()) Exit();
+
                 //update buttons and check if they were clicked
                 for (int i = 1; i < texts.Count; i++)
                 {
@@ -105,15 +103,15 @@ namespace ImpossibleConnect4
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(new Color(1, 125, 233));
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
 
             //we are either in the main menu or currently in a match
-            if (inMatch)
+            if (match.inMatch)
             {
-
+                match.Draw(spriteBatch);
             }
             else
             {

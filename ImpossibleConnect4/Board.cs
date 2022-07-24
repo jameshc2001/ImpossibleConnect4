@@ -48,5 +48,7 @@ namespace ImpossibleConnect4
             }
             Debug.WriteLine("");
         }
+
+        public int getTile(int i, int j) { return data[i, j]; }
     }
 }

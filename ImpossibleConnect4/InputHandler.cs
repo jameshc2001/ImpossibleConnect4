@@ -14,12 +14,26 @@ namespace ImpossibleConnect4
         private bool mouseJustDown;
         private Vector2 mousePos;
 
+        private bool prevEscDown;
+        private bool escDown;
+        private bool escJustDown;
+
+
         public InputHandler() {
             //do nothing?
         }
 
         public void Update()
         {
+            //check for exit
+            escDown = Keyboard.GetState().IsKeyDown(Keys.Escape);
+
+            //get esc just down
+            escJustDown = (escDown && (escDown != prevEscDown));
+
+            //set prev
+            prevEscDown = escDown;
+
             //get mouse state
             MouseState ms = Mouse.GetState();
 
@@ -27,8 +41,7 @@ namespace ImpossibleConnect4
             mousePos = new Vector2(ms.X, ms.Y); //might need to do scaling later?
 
             //get mouse down
-            if (ms.LeftButton == ButtonState.Pressed) mouseDown = true;
-            else mouseDown = false;
+            mouseDown = ms.LeftButton == ButtonState.Pressed;
 
             //set just down
             mouseJustDown = (mouseDown && (mouseDown != prevMouseDown));
@@ -39,5 +52,7 @@ namespace ImpossibleConnect4
 
         public Vector2 getMousePosition() { return mousePos; }
         public bool getMouseJustDown() { return mouseJustDown; }
+
+        public bool getEscJustDown() { return escJustDown; }
     }
 }
