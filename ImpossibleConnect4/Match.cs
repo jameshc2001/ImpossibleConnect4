@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace ImpossibleConnect4
@@ -10,6 +11,7 @@ namespace ImpossibleConnect4
     class Match
     {
         public bool inMatch = false;
+        private bool won = false;
 
         private bool CPU; //true if playing against computer
         private Board board;
@@ -48,6 +50,7 @@ namespace ImpossibleConnect4
             if (val < 0.5) activePlayer = 1; //yellow
             else activePlayer = 2; //red
 
+            won = false;
             inMatch = true;
         }
 
@@ -60,28 +63,44 @@ namespace ImpossibleConnect4
                 return;
             }
 
-            //should we draw the active counter (indicates where counter will go to user)
-            Vector2 mousePos = input.getMousePosition();
-            if (mousePos.X > boardOrigin.X && mousePos.X < boardOrigin.X + 7 * 128)
+            if (won)
             {
-                drawActiveCounter = true;
-                activeColumn = (int)Math.Floor((mousePos.X - boardOrigin.X) / 128.0f);
-                activeCounterPosition = new Vector2(activeColumn * 128, -128) + boardOrigin + pieceOffset;
+                //display win message
             }
             else
             {
-                drawActiveCounter = false;
-            }
-
-            //check if move made!
-            if (drawActiveCounter && input.getMouseJustDown())
-            {
-                if (board.makeMove(activeColumn, activePlayer))
+                //should we draw the active counter (indicates where counter will go to user)
+                Vector2 mousePos = input.getMousePosition();
+                if (mousePos.X > boardOrigin.X && mousePos.X < boardOrigin.X + 7 * 128)
                 {
-                    //check if they won TODO
+                    drawActiveCounter = true;
+                    activeColumn = (int)Math.Floor((mousePos.X - boardOrigin.X) / 128.0f);
+                    activeCounterPosition = new Vector2(activeColumn * 128, -128) + boardOrigin + pieceOffset;
+                }
+                else
+                {
+                    drawActiveCounter = false;
+                }
 
-                    if (activePlayer == 1) activePlayer = 2; //from yellow to red
-                    else activePlayer = 1; //from red to yellow
+                //check if move made!
+                if (drawActiveCounter && input.getMouseJustDown())
+                {
+                    if (board.makeMove(activeColumn, activePlayer))
+                    {
+                        //check if they won TODO
+                        if (board.checkWinWithPrevMove(activePlayer))
+                        {
+                            Debug.WriteLine(activePlayer + " has won!");
+
+                            //display some kind of win message and exit button?
+                            won = true;
+                        }
+                        else
+                        {
+                            if (activePlayer == 1) activePlayer = 2; //from yellow to red
+                            else activePlayer = 1; //from red to yellow
+                        }
+                    }
                 }
             }
         }
@@ -89,7 +108,7 @@ namespace ImpossibleConnect4
         public void Draw(SpriteBatch spriteBatch)
         {
             //draw active counter if necessary
-            if (drawActiveCounter)
+            if (drawActiveCounter && !won)
             {
                 Color color = Color.White;
                 if (activePlayer == 1) color = yellow;
