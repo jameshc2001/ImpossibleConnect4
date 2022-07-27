@@ -53,6 +53,8 @@ namespace ImpossibleConnect4
             texts.Add(new Text(inputHandler, resourceManager.getArial(), "CPU", new Vector2(220, 300), Color.White, 1.0f));
             texts.Add(new Text(inputHandler, resourceManager.getArial(), "2 Player", new Vector2(220, 400), Color.White, 1.0f));
             texts.Add(new Text(inputHandler, resourceManager.getArial(), "Exit", new Vector2(220, 500), Color.White, 1.0f));
+
+            match.LoadContent();
         }
 
         protected override void Update(GameTime gameTime)

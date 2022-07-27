@@ -31,6 +31,11 @@ namespace ImpossibleConnect4
         private Vector2 activeCounterPosition;
         private int activeColumn;
 
+        //win info
+        private Text yellowWin;
+        private Text redWin;
+        private Text exit;
+
         public Match(InputHandler input, ResourceManager rm)
         {
             this.input = input;
@@ -54,6 +59,13 @@ namespace ImpossibleConnect4
             inMatch = true;
         }
 
+        public void LoadContent()
+        {
+            yellowWin = new Text(input, rm.getArial(), "Yellow Wins!", new Vector2(200, 30), Color.White, 1.0f);
+            redWin = new Text(input, rm.getArial(), "Red Wins!", new Vector2(200, 30), Color.White, 1.0f);
+            exit = new Text(input, rm.getArial(), "Exit", new Vector2(900, 30), Color.White, 1.0f);
+        }
+
         public void Update()
         {
             //check for exit
@@ -65,7 +77,8 @@ namespace ImpossibleConnect4
 
             if (won)
             {
-                //display win message
+                exit.UpdateColor();
+                if (exit.wasClicked()) inMatch = false;
             }
             else
             {
@@ -116,6 +129,13 @@ namespace ImpossibleConnect4
 
                 spriteBatch.Draw(rm.getPiece(), activeCounterPosition, null,
                     color, 0, new Vector2(0, 0), new Vector2(1.7f, 1.7f), SpriteEffects.None, 1);
+            }
+
+            if (won)
+            {
+                if (activePlayer == 1) yellowWin.Draw(spriteBatch);
+                else redWin.Draw(spriteBatch);
+                exit.Draw(spriteBatch);
             }
 
             //draw board
